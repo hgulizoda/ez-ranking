@@ -1,181 +1,185 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { calcBonus, getBonusStatus, getBarColor } from "../../helpers/efficiency";
+import { EXPECTED_HOURS, getHoursToBonus } from "../../helpers/efficiency";
 
-function Avatar({ photo, avatar, name }) {
+/* ─── Avatar ─── */
+function Avatar({ photo, avatar, name, isFirst }) {
   const [imgFailed, setImgFailed] = useState(false);
 
+  const outerSize = isFirst ? "w-[92px] h-[92px]" : "w-[64px] h-[64px]";
+  const innerSize = isFirst ? "w-[78px] h-[78px]" : "w-[54px] h-[54px]";
+  const fallbackText = isFirst ? "text-2xl" : "text-lg";
+
   return (
-    <div className="w-[72px] h-[72px] rounded-full overflow-hidden ring-4 ring-white shadow-lg shrink-0">
-      {!imgFailed ? (
-        <img
-          src={photo}
-          alt={name}
-          className="w-full h-full object-cover"
-          referrerPolicy="no-referrer"
-          onError={() => setImgFailed(true)}
-        />
-      ) : (
-        <div className="w-full h-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold text-3xl">
-          {avatar}
-        </div>
-      )}
+    <div
+      className={`${outerSize} rounded-full border border-[#D1D5DB] bg-white flex items-center justify-center shrink-0`}
+      style={{ boxShadow: "0 3px 10px rgba(0,0,0,0.08)" }}
+    >
+      <div className={`${innerSize} rounded-full overflow-hidden`}>
+        {!imgFailed ? (
+          <img
+            src={photo}
+            alt={name}
+            className="w-full h-full object-cover"
+            referrerPolicy="no-referrer"
+            onError={() => setImgFailed(true)}
+          />
+        ) : (
+          <div className={`w-full h-full bg-[#3B82F6] flex items-center justify-center text-white font-semibold ${fallbackText}`}>
+            {avatar}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-function BonusLabel({ efficiency }) {
-  const bonus = calcBonus(efficiency);
-  const status = getBonusStatus(efficiency);
+/* ─── Bonus Info ─── */
+function BonusInfo({ billedHours, workedHours }) {
+  const bonus = getHoursToBonus(billedHours, workedHours);
 
-  if (bonus >= 200) {
+  if (bonus.achieved === "Excellence Bonus") {
     return (
-      <div className="flex flex-col items-center">
-        <span className="text-xl font-bold text-emerald-700 bg-emerald-50 px-6 py-3 rounded-xl border border-emerald-200 whitespace-nowrap">
-          $200 Bonus
+      <div className="flex flex-col items-end gap-1">
+        <span className="text-base font-bold text-[#3B82F6] bg-[#3B82F6]/10 border border-[#3B82F6]/20 px-5 py-2 rounded-xl whitespace-nowrap">
+          Excellence Bonus
         </span>
       </div>
     );
   }
-  if (bonus >= 100) {
+
+  if (bonus.achieved === "Target Bonus") {
     return (
-      <div className="flex flex-col items-center gap-1.5">
-        <span className="text-xl font-bold text-amber-700 bg-amber-50 px-6 py-3 rounded-xl border border-amber-200 whitespace-nowrap">
-          $100 Bonus
+      <div className="flex flex-col items-end gap-1.5">
+        <span className="text-base font-bold text-[#1E293B] bg-[#1E293B]/6 border border-[#1E293B]/10 px-5 py-2 rounded-xl whitespace-nowrap">
+          Target Bonus
         </span>
-        <span className="text-base font-semibold text-emerald-500">{status.label}</span>
+        <span className="text-sm font-semibold text-[#3B82F6] tabular-nums">
+          {bonus.hoursToNext}h to {bonus.nextTierLabel}
+        </span>
       </div>
     );
   }
+
   return (
-    <div className="flex flex-col items-center">
-      <span className="text-xl font-semibold text-orange-600 bg-orange-50 px-6 py-3 rounded-xl border border-orange-200 whitespace-nowrap">
-        {status.label}
+    <div className="flex flex-col items-end gap-1">
+      <span className="text-sm font-semibold text-[#64748B] tabular-nums whitespace-nowrap">
+        {bonus.hoursToNext}h to {bonus.nextTierLabel} Bonus
       </span>
     </div>
   );
 }
 
-function EfficiencyBar({ efficiency, index }) {
-  const capped = Math.min(efficiency, 120);
-  const widthPercent = (capped / 120) * 100;
-  const barColor = getBarColor(efficiency);
+/* ─── Left Hours Progress Bar ─── */
+function LeftHoursBar({ workedHours, index }) {
+  const progress = Math.min((workedHours / EXPECTED_HOURS) * 100, 100);
 
   return (
-    <div className="flex items-center gap-5 w-full">
-      <div className="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden relative">
+    <div className="w-full">
+      <div className="h-3 bg-[#E2E8F0] rounded-full overflow-hidden">
         <motion.div
-          className={`h-full rounded-full ${barColor}`}
+          className="h-full rounded-full bg-[#3B82F6]"
           initial={{ width: 0 }}
-          animate={{ width: `${widthPercent}%` }}
-          transition={{ duration: 1, delay: index * 0.08 + 0.3, ease: [0.22, 1, 0.36, 1] }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.8, delay: index * 0.06 + 0.3, ease: [0.22, 1, 0.36, 1] }}
         />
-        <div className="absolute top-0 h-full w-[2px] bg-gray-300/60" style={{ left: `${(90 / 120) * 100}%` }} />
-        <div className="absolute top-0 h-full w-[2px] bg-gray-300/60" style={{ left: `${(100 / 120) * 100}%` }} />
       </div>
-      <span
-        className={`text-4xl font-extrabold tabular-nums shrink-0 ${
-          efficiency > 100
-            ? "text-emerald-600"
-            : efficiency > 90
-            ? "text-orange-500"
-            : "text-gray-500"
-        }`}
-      >
-        {efficiency.toFixed(1)}%
-      </span>
     </div>
   );
 }
 
+/* ─── Row animation variants ─── */
 const rowVariants = {
-  hidden: { opacity: 0, x: 50 },
+  hidden: { opacity: 0, y: 16 },
   visible: (i) => ({
     opacity: 1,
-    x: 0,
+    y: 0,
     transition: {
-      delay: i * 0.07 + 0.1,
-      duration: 0.5,
+      delay: i * 0.06 + 0.1,
+      duration: 0.45,
       ease: [0.22, 1, 0.36, 1],
     },
   }),
 };
 
-function getOrdinal(n) {
-  if (n === 1) return "st";
-  if (n === 2) return "nd";
-  if (n === 3) return "rd";
-  return "th";
-}
-
+/* ─── Main Card Component ─── */
 export default function BoardWorkerRow({ worker, index }) {
-  const { rank, name, avatar, photo, department, clockIn, clockOut, billedHours, efficiency } = worker;
+  const { rank, name, avatar, photo, department, workedHours, billedHours, efficiency } = worker;
+
+  const remaining = Math.max(0, EXPECTED_HOURS - workedHours);
+  const isEven = index % 2 === 0;
 
   return (
     <motion.div
-      className="flex items-center bg-white rounded-2xl shadow-[0_2px_16px_rgba(0,0,0,0.06)] border border-gray-100/60 px-8 py-6"
+      className={`
+        flex items-center rounded-2xl px-10 py-12
+        border transition-colors duration-300
+        ${isEven
+          ? "bg-white border-[#E2E8F0] shadow-[0_1px_8px_rgba(0,0,0,0.04)]"
+          : "bg-[#F0F4FF] border-[#DDE4F0] shadow-none"
+        }
+      `}
       variants={rowVariants}
       custom={index}
       initial="hidden"
       animate="visible"
     >
-      {/* Rank */}
-      <div className="w-20 shrink-0 flex items-center justify-center">
-        <span className="text-4xl font-extrabold text-gray-400 tabular-nums">
-          {rank}
+      {/* ── Rank ── */}
+      <div className="w-16 shrink-0 flex items-center justify-center">
+        <span className={`text-4xl font-extrabold tabular-nums ${
+          rank <= 3 ? "text-[#3B82F6]" : "text-[#CBD5E1]"
+        }`}>
+          {String(rank).padStart(2, "0")}
         </span>
-        <sup className="text-lg font-bold text-gray-400 ml-0.5 -mt-4">{getOrdinal(rank)}</sup>
       </div>
 
-      {/* Avatar */}
-      <div className="shrink-0 mr-6">
-        <Avatar photo={photo} avatar={avatar} name={name} />
-      </div>
-
-      {/* Name + Department */}
-      <div className="w-[220px] shrink-0">
-        <h3 className="text-2xl font-bold text-gray-900 leading-tight truncate">{name}</h3>
-        <p className="text-base text-gray-500 mt-1">{department}</p>
-      </div>
-
-      {/* Clock In — green */}
-      <div className="w-[120px] shrink-0 text-center">
-        <div className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
-          <svg className="w-5 h-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
-          </svg>
-          <span className="text-lg font-bold text-emerald-700 tabular-nums">{clockIn}</span>
+      {/* ── Avatar + Identity ── */}
+      <div className="flex items-center gap-5 w-[280px] shrink-0 ml-5">
+        <Avatar photo={photo} avatar={avatar} name={name} isFirst={rank === 1} />
+        <div className="min-w-0">
+          <h3 className="text-2xl font-bold text-[#1E293B] leading-tight truncate">
+            {name}
+          </h3>
+          <p className="text-base text-[#64748B] mt-1 font-medium">{department}</p>
         </div>
-        <p className="text-xs text-emerald-600 uppercase tracking-wider font-bold mt-2">Clock In</p>
       </div>
 
-      {/* Clock Out — red */}
-      <div className="w-[120px] shrink-0 text-center">
-        <div className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-red-50 border border-red-200">
-          <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
-          </svg>
-          <span className="text-lg font-bold text-red-700 tabular-nums">{clockOut}</span>
-        </div>
-        <p className="text-xs text-red-600 uppercase tracking-wider font-bold mt-2">Clock Out</p>
-      </div>
-
-      {/* Billed Hours — blue accent */}
+      {/* ── Worked Hours ── */}
       <div className="w-[110px] shrink-0 text-center">
-        <div className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-50 border border-blue-200">
-          <span className="text-lg font-bold text-blue-700 tabular-nums">{billedHours}h</span>
+        <p className="text-3xl font-extrabold text-[#1E293B] tabular-nums">{workedHours}h</p>
+        <p className="text-sm text-[#64748B] uppercase tracking-wide mt-1.5 font-semibold">Worked</p>
+      </div>
+
+      {/* ── Remaining Hours ── */}
+      <div className="w-[110px] shrink-0 text-center">
+        <p className="text-3xl font-extrabold text-[#1E293B] tabular-nums">{remaining}h</p>
+        <p className="text-sm text-[#64748B] uppercase tracking-wide mt-1.5 font-semibold">Remaining</p>
+      </div>
+
+      {/* ── Progress Bar ── */}
+      <div className="flex-1 min-w-[160px] px-8">
+        <LeftHoursBar workedHours={workedHours} index={index} />
+      </div>
+
+      {/* ── Efficiency % ── */}
+      <div className="w-[130px] shrink-0 flex items-center justify-center">
+        <div className="text-center">
+          <p className={`text-4xl font-extrabold tabular-nums ${
+            efficiency >= 100
+              ? "text-[#3B82F6]"
+              : efficiency >= 90
+              ? "text-[#1E293B]"
+              : "text-[#94A3B8]"
+          }`}>
+            {efficiency.toFixed(1)}%
+          </p>
+          <p className="text-sm text-[#64748B] uppercase tracking-wide mt-1.5 font-semibold">Efficiency</p>
         </div>
-        <p className="text-xs text-blue-600 uppercase tracking-wider font-bold mt-2">Billed</p>
       </div>
 
-      {/* Efficiency progress bar + percentage */}
-      <div className="flex-1 min-w-[220px] px-8">
-        <EfficiencyBar efficiency={efficiency} index={index} />
-      </div>
-
-      {/* Bonus distance */}
-      <div className="shrink-0 w-[180px] flex justify-center">
-        <BonusLabel efficiency={efficiency} />
+      {/* ── Bonus Info (achieved + hours to next) ── */}
+      <div className="w-[220px] shrink-0 flex justify-end">
+        <BonusInfo billedHours={billedHours} workedHours={workedHours} />
       </div>
     </motion.div>
   );

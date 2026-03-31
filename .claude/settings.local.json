@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:i.pinimg.com)",
+      "Bash(npx vite:*)"
+    ]
+  }
+}
