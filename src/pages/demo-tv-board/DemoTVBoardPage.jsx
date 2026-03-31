@@ -45,7 +45,7 @@ export default function DemoTVBoardPage() {
           onSelect={setSelectedDepartment}
         />
       ) : (
-        <div key="board" className="min-h-screen bg-[#F1F5F9] flex flex-col">
+        <div key="board" className="min-h-screen bg-[#F1F5F9] flex flex-col" style={{ fontSize: "clamp(12px, 0.85vw, 22px)" }}>
           <BoardHeader
             workers={ranked}
             department={selectedDepartment}

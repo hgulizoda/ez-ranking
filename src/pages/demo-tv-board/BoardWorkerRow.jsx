@@ -8,8 +8,8 @@ function Avatar({ photo, avatar, name }) {
 
   return (
     <div
-      className="w-[180px] h-[180px] rounded-full border border-[#D1D5DB] bg-white flex items-center justify-center shrink-0"
-      style={{ boxShadow: "0 3px 10px rgba(0,0,0,0.08)" }}
+      className="w-[11.25em] h-[11.25em] rounded-full border border-[#D1D5DB] bg-white flex items-center justify-center shrink-0"
+      style={{ boxShadow: "0 0.2em 0.6em rgba(0,0,0,0.08)" }}
     >
       <div className="w-full h-full rounded-full overflow-hidden border-amber-50 border-4">
         {!imgFailed ? (
@@ -37,7 +37,7 @@ function BonusInfo({ billedHours, workedHours }) {
   if (bonus.achieved === "Target Bonus") {
     return (
       <div className="flex flex-col items-center gap-1.5">
-        <div className="w-[110px] shrink-0 text-center">
+        <div className="w-[6.875em] shrink-0 text-center">
           <p className="text-3xl font-extrabold text-[#1E293B] tabular-nums">
             {bonus.hoursToNext}h
           </p>
@@ -51,7 +51,7 @@ function BonusInfo({ billedHours, workedHours }) {
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <div className="w-[110px] shrink-0 text-center">
+      <div className="w-[6.875em] shrink-0 text-center">
         <p className="text-3xl font-extrabold text-[#1E293B] tabular-nums">
           {bonus.hoursToNext}h
         </p>
@@ -69,7 +69,7 @@ function LeftHoursBar({ workedHours, index }) {
 
   return (
     <div className="w-full">
-      <div className="h-3 bg-[#E2E8F0] rounded-full overflow-hidden">
+      <div className="h-[0.6em] bg-[#E2E8F0] rounded-full overflow-hidden">
         <motion.div
           className="h-full rounded-full bg-[#3B82F6]"
           initial={{ width: 0 }}
@@ -132,7 +132,7 @@ export default function BoardWorkerRow({ worker, index }) {
     >
       {/* ── Rank (floating badge) ── */}
       <div
-        className={`absolute -top-3 -left-3 z-10 w-11 h-11 rounded-full flex items-center justify-center text-sm font-extrabold tabular-nums shadow-md ${
+        className={`absolute -top-[0.75em] -left-[0.75em] z-10 w-[2.75em] h-[2.75em] rounded-full flex items-center justify-center text-sm font-extrabold tabular-nums shadow-md ${
           rank <= 3
             ? "bg-[#3B82F6] text-white"
             : "bg-white text-[#94A3B8] border border-[#E2E8F0]"
@@ -177,7 +177,7 @@ export default function BoardWorkerRow({ worker, index }) {
       </div>
 
       {/* ── Efficiency % ── */}
-      <div className="w-[130px] shrink-0 flex items-center justify-center">
+      <div className="w-[8.125em] shrink-0 flex items-center justify-center">
         <div className="text-center">
           <p
             className={`text-4xl font-extrabold tabular-nums ${
