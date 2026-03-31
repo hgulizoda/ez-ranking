@@ -8,10 +8,10 @@ function Avatar({ photo, avatar, name }) {
 
   return (
     <div
-      className="w-[64px] h-[64px] rounded-full border border-[#D1D5DB] bg-white flex items-center justify-center shrink-0"
+      className="w-[180px] h-[180px] rounded-full border border-[#D1D5DB] bg-white flex items-center justify-center shrink-0"
       style={{ boxShadow: "0 3px 10px rgba(0,0,0,0.08)" }}
     >
-      <div className="w-[54px] h-[54px] rounded-full overflow-hidden">
+      <div className="w-full h-full rounded-full overflow-hidden border-amber-50 border-4">
         {!imgFailed ? (
           <img
             src={photo}
@@ -34,34 +34,31 @@ function Avatar({ photo, avatar, name }) {
 function BonusInfo({ billedHours, workedHours }) {
   const bonus = getHoursToBonus(billedHours, workedHours);
 
-  if (bonus.achieved === "Excellence Bonus") {
-    return (
-      <div className="flex flex-col items-end gap-1">
-        <span className="text-base font-bold text-[#3B82F6] bg-[#3B82F6]/10 border border-[#3B82F6]/20 px-5 py-2 rounded-xl whitespace-nowrap">
-          Excellence Bonus
-        </span>
-      </div>
-    );
-  }
-
   if (bonus.achieved === "Target Bonus") {
     return (
       <div className="flex flex-col items-center gap-1.5">
-        <span className="text-base font-bold text-[#1E293B] bg-[#1E293B]/6 border border-[#1E293B]/10 px-5 py-2 rounded-xl whitespace-nowrap">
-          Target Bonus
-        </span>
-        <span className="text-sm font-semibold text-[#3B82F6] tabular-nums">
-          {bonus.hoursToNext}h to {bonus.nextTierLabel}
-        </span>
+        <div className="w-[110px] shrink-0 text-center">
+          <p className="text-3xl font-extrabold text-[#1E293B] tabular-nums">
+            {bonus.hoursToNext}h
+          </p>
+          <p className="text-sm text-[#64748B] uppercase tracking-wide mt-1.5 font-semibold">
+            Till Bonus
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="text-sm font-semibold text-[#64748B] tabular-nums whitespace-nowrap">
-        {bonus.hoursToNext}h to {bonus.nextTierLabel} Bonus
-      </span>
+      <div className="w-[110px] shrink-0 text-center">
+        <p className="text-3xl font-extrabold text-[#1E293B] tabular-nums">
+          {bonus.hoursToNext}h
+        </p>
+        <p className="text-sm text-[#64748B] uppercase tracking-wide mt-1.5 font-semibold">
+          Till Bonus
+        </p>
+      </div>
     </div>
   );
 }
@@ -115,17 +112,17 @@ export default function BoardWorkerRow({ worker, index }) {
     efficiency,
   } = worker;
 
-  const remaining = Math.max(0, EXPECTED_HOURS - workedHours);
   const isEven = index % 2 === 0;
 
   return (
     <motion.div
       className={`
-        flex items-center rounded-2xl px-10 py-12
-        border transition-colors duration-300
-        ${isEven
-          ? "bg-white border-[#E2E8F0] shadow-[0_1px_8px_rgba(0,0,0,0.04)]"
-          : "bg-[#F0F4FF] border-[#DDE4F0] shadow-none"
+        relative flex items-center rounded-2xl px-10 py-1
+        border transition-colors duration-300 justify-between
+        ${
+          isEven
+            ? "bg-white border-[#E2E8F0] shadow-[0_1px_8px_rgba(0,0,0,0.04)]"
+            : "bg-[#F0F4FF] border-[#DDE4F0] shadow-none"
         }
       `}
       variants={rowVariants}
@@ -133,19 +130,19 @@ export default function BoardWorkerRow({ worker, index }) {
       initial="hidden"
       animate="visible"
     >
-      {/* ── Rank ── */}
-      <div className="w-16 shrink-0 flex items-center justify-center">
-        <span
-          className={`text-4xl font-extrabold tabular-nums ${
-            rank <= 3 ? "text-[#3B82F6]" : "text-[#CBD5E1]"
-          }`}
-        >
-          {String(rank).padStart(2, "0")}
-        </span>
+      {/* ── Rank (floating badge) ── */}
+      <div
+        className={`absolute -top-3 -left-3 z-10 w-11 h-11 rounded-full flex items-center justify-center text-sm font-extrabold tabular-nums shadow-md ${
+          rank <= 3
+            ? "bg-[#3B82F6] text-white"
+            : "bg-white text-[#94A3B8] border border-[#E2E8F0]"
+        }`}
+      >
+        {String(rank).padStart(2, "0")}
       </div>
 
       {/* ── Avatar + Identity ── */}
-      <div className="flex items-center gap-5 w-[280px] shrink-0 ml-5">
+      <div className="flex items-center gap-4 w-[35%] shrink-0 ">
         <Avatar photo={photo} avatar={avatar} name={name} />
         <div className="min-w-0">
           <h3 className="text-2xl font-bold text-[#1E293B] leading-tight truncate">
@@ -157,28 +154,25 @@ export default function BoardWorkerRow({ worker, index }) {
         </div>
       </div>
 
-      {/* ── Worked Hours ── */}
-      <div className="w-[110px] shrink-0 text-center">
-        <p className="text-3xl font-extrabold text-[#1E293B] tabular-nums">
-          {workedHours}h
-        </p>
-        <p className="text-sm text-[#64748B] uppercase tracking-wide mt-1.5 font-semibold">
-          Worked
-        </p>
-      </div>
+      <div className="flex items-center gap-2">
+        {/* ── Worked Hours ── */}
+        <div className=" shrink-0 text-center">
+          <p className="text-3xl font-extrabold text-[#1E293B] tabular-nums">
+            {workedHours}h
+          </p>
+          <p className="text-sm text-[#64748B] uppercase tracking-wide mt-1.5 font-semibold">
+            Worked
+          </p>
+        </div>
 
-      {/* ── Remaining Hours ── */}
-      <div className="w-[110px] shrink-0 text-center">
-        <p className="text-3xl font-extrabold text-[#1E293B] tabular-nums">
-          {remaining}h
-        </p>
-        <p className="text-sm text-[#64748B] uppercase tracking-wide mt-1.5 font-semibold">
-          Remaining
-        </p>
+        {/* ── Remaining Hours ── */}
+        <div className=" shrink-0 flex justify-center">
+          <BonusInfo billedHours={billedHours} workedHours={workedHours} />
+        </div>
       </div>
 
       {/* ── Progress Bar ── */}
-      <div className="flex-1 min-w-[160px] px-8">
+      <div className=" min-w-[40%] px-8">
         <LeftHoursBar workedHours={workedHours} index={index} />
       </div>
 
@@ -203,9 +197,6 @@ export default function BoardWorkerRow({ worker, index }) {
       </div>
 
       {/* ── Bonus Info (achieved + hours to next) ── */}
-      <div className="w-[220px] shrink-0 flex justify-center">
-        <BonusInfo billedHours={billedHours} workedHours={workedHours} />
-      </div>
     </motion.div>
   );
 }
