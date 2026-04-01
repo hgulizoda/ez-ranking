@@ -1,8 +1,15 @@
 import { motion } from "framer-motion";
 import Header from "./Header";
 import WorkerCard from "./WorkerCard";
+import type { RankedWorker } from "../types";
 
-export default function Dashboard({ workers, department, onBack }) {
+interface DashboardProps {
+  workers: RankedWorker[];
+  department: string;
+  onBack: () => void;
+}
+
+export default function Dashboard({ workers, department, onBack }: DashboardProps) {
   return (
     <motion.div
       className="min-h-screen bg-[#f4f6f9] flex flex-col"
@@ -26,7 +33,6 @@ export default function Dashboard({ workers, department, onBack }) {
           </div>
         ) : (
           <>
-            {/* Column headers */}
             <div className="flex items-center gap-5 px-7 py-2 mb-1">
               <div className="shrink-0 w-12">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Rank</span>
@@ -54,7 +60,6 @@ export default function Dashboard({ workers, department, onBack }) {
               </div>
             </div>
 
-            {/* Worker rows */}
             <div className="flex flex-col gap-2">
               {workers.map((worker, i) => (
                 <WorkerCard key={worker.id} worker={worker} index={i} />

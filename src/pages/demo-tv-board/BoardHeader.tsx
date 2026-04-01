@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import logo from "../../assets/logo.png";
+import type { RankedWorker } from "../../types";
 
 function LiveClock() {
   const [now, setNow] = useState(new Date());
@@ -35,7 +36,13 @@ function LiveClock() {
   );
 }
 
-export default function BoardHeader({ workers, department, onBack }) {
+interface BoardHeaderProps {
+  workers: RankedWorker[];
+  department: string;
+  onBack: () => void;
+}
+
+export default function BoardHeader({ workers, department, onBack }: BoardHeaderProps) {
   const total = workers.length;
   const avgEff =
     total > 0
@@ -50,7 +57,6 @@ export default function BoardHeader({ workers, department, onBack }) {
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className="flex items-center justify-between px-12 py-4">
-        {/* Left — Company logo + title */}
         <div className="flex items-center gap-5">
           <div className="w-20 h-20 rounded-xl  flex items-center justify-center shadow-sm overflow-hidden">
             <img src={logo} alt="logo" className="w-full h-full object-cover" />
@@ -71,7 +77,6 @@ export default function BoardHeader({ workers, department, onBack }) {
           </button>
         </div>
 
-        {/* Center — key stats */}
         <div className="flex items-center gap-16">
           <div className="text-center">
             <p className="text-4xl font-extrabold text-[#1E293B] tabular-nums leading-none">
@@ -92,7 +97,6 @@ export default function BoardHeader({ workers, department, onBack }) {
           </div>
         </div>
 
-        {/* Right — clock */}
         <LiveClock />
       </div>
     </motion.header>

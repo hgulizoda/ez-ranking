@@ -1,32 +1,19 @@
-/**
- * Calculate efficiency percentage from billed and worked hours.
- */
-export function calcEfficiency(billedHours, workedHours) {
+import type { BonusStatus, BonusTier, HoursToBonus, Worker } from "../types";
+
+export function calcEfficiency(billedHours: number, workedHours: number): number {
   if (workedHours <= 0) return 0;
   return (billedHours / workedHours) * 100;
 }
 
-/**
- * Standard expected hours per period (22 working days × 8 hours).
- */
 export const EXPECTED_HOURS = 176;
 
-/**
- * Determine bonus tier based on efficiency.
- *  >= 100% → "excellence"
- *  >= 90%  → "target"
- *  else    → null
- */
-export function getBonusTier(efficiency) {
+export function getBonusTier(efficiency: number): BonusTier {
   if (efficiency >= 100) return "excellence";
   if (efficiency >= 90) return "target";
   return null;
 }
 
-/**
- * Return a clean bonus status message — no dollar amounts.
- */
-export function getBonusStatus(efficiency) {
+export function getBonusStatus(efficiency: number): BonusStatus {
   if (efficiency >= 100) {
     return { label: "Achieved Excellence Bonus", tier: "excellence" };
   }
@@ -43,11 +30,7 @@ export function getBonusStatus(efficiency) {
   return { label: `${gap}% to Target Bonus`, tier: "pending" };
 }
 
-/**
- * Calculate how many billed hours are needed to reach the next bonus tier.
- * Returns { achieved, hoursToNext, nextTierLabel } or null if at max tier.
- */
-export function getHoursToBonus(billedHours, workedHours) {
+export function getHoursToBonus(billedHours: number, workedHours: number): HoursToBonus {
   const efficiency = calcEfficiency(billedHours, workedHours);
   const targetThreshold = workedHours * 0.9;
   const excellenceThreshold = workedHours * 1.0;
@@ -63,31 +46,19 @@ export function getHoursToBonus(billedHours, workedHours) {
   return { achieved: null, hoursToNext: hoursNeeded, nextTierLabel: "Target" };
 }
 
-/**
- * Determine bonus dollar amount based on efficiency (used by desktop dashboard).
- *  > 100% → $200
- *  > 90%  → $100
- *  else   → $0
- */
-export function calcBonus(efficiency) {
+export function calcBonus(efficiency: number): number {
   if (efficiency > 100) return 200;
   if (efficiency > 90) return 100;
   return 0;
 }
 
-/**
- * Return the progress bar color based on efficiency tier (used by desktop dashboard).
- */
-export function getBarColor(efficiency) {
+export function getBarColor(efficiency: number): string {
   if (efficiency > 100) return "bg-gradient-to-r from-emerald-400 to-emerald-500";
   if (efficiency > 90) return "bg-gradient-to-r from-amber-400 to-orange-400";
   return "bg-gradient-to-r from-gray-200 to-gray-300";
 }
 
-/**
- * Sort workers by efficiency descending and attach rank + efficiency.
- */
-export function rankWorkers(workers) {
+export function rankWorkers(workers: Worker[]) {
   return [...workers]
     .map((w) => ({
       ...w,

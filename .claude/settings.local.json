@@ -3,7 +3,9 @@
     "allow": [
       "WebFetch(domain:i.pinimg.com)",
       "Bash(npx vite:*)",
-      "Bash(npx eslint:*)"
+      "Bash(npx eslint:*)",
+      "Bash(rm:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

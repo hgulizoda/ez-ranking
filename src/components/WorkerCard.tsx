@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import ProgressBar from "./ProgressBar";
 import BonusBadge from "./BonusBadge";
+import type { RankedWorker } from "../types";
 
 const avatarGradients = [
   "from-violet-500 to-purple-600",
@@ -15,7 +16,7 @@ const avatarGradients = [
   "from-pink-500 to-rose-600",
 ];
 
-const rankConfig = {
+const rankConfig: Record<number, { bg: string; text: string; shadow: string }> = {
   1: {
     bg: "bg-gradient-to-br from-yellow-300 via-amber-400 to-yellow-500",
     text: "text-yellow-900",
@@ -33,13 +34,13 @@ const rankConfig = {
   },
 };
 
-const deptColors = {
+const deptColors: Record<string, string> = {
   Engineering: "bg-blue-100 text-blue-600",
   Design: "bg-purple-100 text-purple-600",
   Marketing: "bg-amber-100 text-amber-600",
 };
 
-function RankBadge({ rank }) {
+function RankBadge({ rank }: { rank: number }) {
   const config = rankConfig[rank];
 
   if (config) {
@@ -59,20 +60,25 @@ function RankBadge({ rank }) {
 
 const cardVariants = {
   hidden: { opacity: 0, x: -30, scale: 0.97 },
-  visible: (i) => ({
+  visible: (i: number) => ({
     opacity: 1,
     x: 0,
     scale: 1,
     transition: {
       delay: i * 0.06,
-      type: "spring",
+      type: "spring" as const,
       stiffness: 260,
       damping: 22,
     },
   }),
 };
 
-export default function WorkerCard({ worker, index }) {
+interface WorkerCardProps {
+  worker: RankedWorker;
+  index: number;
+}
+
+export default function WorkerCard({ worker, index }: WorkerCardProps) {
   const { rank, name, avatar, department, workedHours, billedHours, efficiency } = worker;
   const gradient = avatarGradients[worker.id % avatarGradients.length];
   const isTopThree = rank <= 3;
@@ -90,17 +96,14 @@ export default function WorkerCard({ worker, index }) {
       animate="visible"
       layout
     >
-      {/* Rank */}
       <div className="shrink-0">
         <RankBadge rank={rank} />
       </div>
 
-      {/* Avatar */}
       <div className={`w-13 h-13 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-bold text-base shrink-0 shadow-md ring-2 ring-white`}>
         {avatar}
       </div>
 
-      {/* Name + Department */}
       <div className="w-52 shrink-0">
         <h3 className="text-lg font-bold text-gray-900 truncate leading-tight">{name}</h3>
         <span className={`inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-semibold ${deptColors[department] || "bg-gray-100 text-gray-600"}`}>
@@ -108,7 +111,6 @@ export default function WorkerCard({ worker, index }) {
         </span>
       </div>
 
-      {/* Hours */}
       <div className="flex gap-5 shrink-0">
         <div className="text-center min-w-[52px]">
           <p className="text-base font-bold text-gray-800 tabular-nums">{workedHours}h</p>
@@ -120,12 +122,10 @@ export default function WorkerCard({ worker, index }) {
         </div>
       </div>
 
-      {/* Progress Bar */}
       <div className="flex-1 min-w-[100px] px-2">
         <ProgressBar efficiency={efficiency} />
       </div>
 
-      {/* Efficiency % */}
       <div className="w-24 text-right shrink-0">
         <span
           className={`text-2xl font-extrabold tabular-nums tracking-tight ${
@@ -151,7 +151,6 @@ export default function WorkerCard({ worker, index }) {
         </span>
       </div>
 
-      {/* Bonus */}
       <div className="w-44 shrink-0 flex justify-end">
         <BonusBadge efficiency={efficiency} />
       </div>

@@ -1,10 +1,6 @@
-/**
- * Mock worker data with departments.
- * Structured so it can be replaced with an API call later:
- *   export async function fetchWorkers() { return fetch('/api/workers').then(r => r.json()); }
- */
+import type { Worker } from "../types";
 
-const mockWorkers = [
+const mockWorkers: Worker[] = [
   {
     id: 1,
     name: "Aysel Mammadova",
@@ -117,13 +113,13 @@ const mockWorkers = [
   },
 ];
 
-export function fetchWorkers() {
+export function fetchWorkers(): Promise<Worker[]> {
   return new Promise((resolve) => {
     setTimeout(() => resolve(mockWorkers), 300);
   });
 }
 
-export function getDepartments(workers) {
+export function getDepartments(workers: Worker[]): string[] {
   return [...new Set(workers.map((w) => w.department))];
 }
 

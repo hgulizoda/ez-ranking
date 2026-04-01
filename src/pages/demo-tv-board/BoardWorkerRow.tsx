@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { EXPECTED_HOURS, getHoursToBonus } from "../../helpers/efficiency";
+import type { RankedWorker } from "../../types";
 
-/* ─── Avatar ─── */
-function Avatar({ photo, avatar, name }) {
+function Avatar({ photo, avatar, name }: { photo: string; avatar: string; name: string }) {
   const [imgFailed, setImgFailed] = useState(false);
 
   return (
@@ -30,8 +30,7 @@ function Avatar({ photo, avatar, name }) {
   );
 }
 
-/* ─── Bonus Info ─── */
-function BonusInfo({ billedHours, workedHours }) {
+function BonusInfo({ billedHours, workedHours }: { billedHours: number; workedHours: number }) {
   const bonus = getHoursToBonus(billedHours, workedHours);
 
   if (bonus.achieved === "Target Bonus") {
@@ -63,8 +62,7 @@ function BonusInfo({ billedHours, workedHours }) {
   );
 }
 
-/* ─── Left Hours Progress Bar ─── */
-function LeftHoursBar({ workedHours, index }) {
+function LeftHoursBar({ workedHours, index }: { workedHours: number; index: number }) {
   const progress = Math.min((workedHours / EXPECTED_HOURS) * 100, 100);
 
   return (
@@ -85,22 +83,25 @@ function LeftHoursBar({ workedHours, index }) {
   );
 }
 
-/* ─── Row animation variants ─── */
 const rowVariants = {
   hidden: { opacity: 0, y: 16 },
-  visible: (i) => ({
+  visible: (i: number) => ({
     opacity: 1,
     y: 0,
     transition: {
       delay: i * 0.06 + 0.1,
       duration: 0.45,
-      ease: [0.22, 1, 0.36, 1],
+      ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
     },
   }),
 };
 
-/* ─── Main Card Component ─── */
-export default function BoardWorkerRow({ worker, index }) {
+interface BoardWorkerRowProps {
+  worker: RankedWorker;
+  index: number;
+}
+
+export default function BoardWorkerRow({ worker, index }: BoardWorkerRowProps) {
   const {
     rank,
     name,
@@ -130,7 +131,6 @@ export default function BoardWorkerRow({ worker, index }) {
       initial="hidden"
       animate="visible"
     >
-      {/* ── Rank (floating badge) ── */}
       <div
         className={`absolute -top-[0.75em] -left-[0.75em] z-10 w-[2.75em] h-[2.75em] rounded-full flex items-center justify-center text-sm font-extrabold tabular-nums shadow-md ${
           rank <= 3
@@ -141,7 +141,6 @@ export default function BoardWorkerRow({ worker, index }) {
         {String(rank).padStart(2, "0")}
       </div>
 
-      {/* ── Avatar + Identity ── */}
       <div className="flex items-center gap-4 w-[35%] shrink-0 ">
         <Avatar photo={photo} avatar={avatar} name={name} />
         <div className="min-w-0">
@@ -155,7 +154,6 @@ export default function BoardWorkerRow({ worker, index }) {
       </div>
 
       <div className="flex items-center gap-2">
-        {/* ── Worked Hours ── */}
         <div className=" shrink-0 text-center">
           <p className="text-3xl font-extrabold text-[#1E293B] tabular-nums">
             {workedHours}h
@@ -165,18 +163,15 @@ export default function BoardWorkerRow({ worker, index }) {
           </p>
         </div>
 
-        {/* ── Remaining Hours ── */}
         <div className=" shrink-0 flex justify-center">
           <BonusInfo billedHours={billedHours} workedHours={workedHours} />
         </div>
       </div>
 
-      {/* ── Progress Bar ── */}
       <div className=" min-w-[40%] px-8">
         <LeftHoursBar workedHours={workedHours} index={index} />
       </div>
 
-      {/* ── Efficiency % ── */}
       <div className="w-[8.125em] shrink-0 flex items-center justify-center">
         <div className="text-center">
           <p
@@ -195,8 +190,6 @@ export default function BoardWorkerRow({ worker, index }) {
           </p>
         </div>
       </div>
-
-      {/* ── Bonus Info (achieved + hours to next) ── */}
     </motion.div>
   );
 }

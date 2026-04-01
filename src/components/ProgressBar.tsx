@@ -1,7 +1,11 @@
 import { motion } from "framer-motion";
 import { getBarColor } from "../helpers/efficiency";
 
-export default function ProgressBar({ efficiency }) {
+interface ProgressBarProps {
+  efficiency: number;
+}
+
+export default function ProgressBar({ efficiency }: ProgressBarProps) {
   const capped = Math.min(efficiency, 120);
   const widthPercent = (capped / 120) * 100;
   const barColor = getBarColor(efficiency);
@@ -16,7 +20,6 @@ export default function ProgressBar({ efficiency }) {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         />
       </div>
-      {/* Threshold markers */}
       <div
         className="absolute top-0 h-full w-px bg-gray-300/50"
         style={{ left: `${(90 / 120) * 100}%` }}

@@ -1,7 +1,11 @@
 import { motion } from "framer-motion";
 import { calcBonus, getBonusStatus } from "../helpers/efficiency";
 
-export default function BonusBadge({ efficiency }) {
+interface BonusBadgeProps {
+  efficiency: number;
+}
+
+export default function BonusBadge({ efficiency }: BonusBadgeProps) {
   const bonus = calcBonus(efficiency);
   const status = getBonusStatus(efficiency);
 

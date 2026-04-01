@@ -1,6 +1,15 @@
 import { motion } from "framer-motion";
+import type { ReactNode } from "react";
 
-const deptMeta = {
+interface DeptMeta {
+  icon: ReactNode;
+  gradient: string;
+  bg: string;
+  border: string;
+  text: string;
+}
+
+const deptMeta: Record<string, DeptMeta> = {
   Engineering: {
     icon: (
       <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -36,7 +45,7 @@ const deptMeta = {
   },
 };
 
-const fallbackMeta = {
+const fallbackMeta: DeptMeta = {
   icon: (
     <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
@@ -66,11 +75,16 @@ const cardVariants = {
     opacity: 1,
     y: 0,
     scale: 1,
-    transition: { type: "spring", stiffness: 300, damping: 24 },
+    transition: { type: "spring" as const, stiffness: 300, damping: 24 },
   },
 };
 
-export default function DepartmentSelectScreen({ departments, onSelect }) {
+interface DepartmentSelectScreenProps {
+  departments: string[];
+  onSelect: (dept: string) => void;
+}
+
+export default function DepartmentSelectScreen({ departments, onSelect }: DepartmentSelectScreenProps) {
   return (
     <motion.div
       className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-white to-blue-50"
@@ -79,7 +93,6 @@ export default function DepartmentSelectScreen({ departments, onSelect }) {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.4 }}
     >
-      {/* Title */}
       <motion.div
         className="text-center mb-16"
         initial={{ opacity: 0, y: -30 }}
@@ -97,7 +110,6 @@ export default function DepartmentSelectScreen({ departments, onSelect }) {
         </p>
       </motion.div>
 
-      {/* Department cards */}
       <motion.div
         className="grid grid-cols-3 gap-8 max-w-4xl w-full px-8"
         variants={containerVariants}
@@ -116,11 +128,9 @@ export default function DepartmentSelectScreen({ departments, onSelect }) {
               onClick={() => onSelect(dept)}
               className={`group relative flex flex-col items-center gap-5 px-8 py-12 rounded-3xl ${meta.bg} border-2 ${meta.border} cursor-pointer transition-shadow duration-300 hover:shadow-xl hover:shadow-blue-100/60 focus:outline-none`}
             >
-              {/* Icon circle */}
               <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${meta.gradient} flex items-center justify-center text-white shadow-lg transition-transform duration-300 group-hover:scale-110`}>
                 {meta.icon}
               </div>
-              {/* Label */}
               <span className={`text-3xl font-bold ${meta.text}`}>
                 {dept}
               </span>
@@ -129,7 +139,6 @@ export default function DepartmentSelectScreen({ departments, onSelect }) {
         })}
       </motion.div>
 
-      {/* View all */}
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { calcBonus } from "../helpers/efficiency";
+import type { RankedWorker } from "../types";
 
 function LiveClock() {
   const [now, setNow] = useState(new Date());
@@ -30,14 +31,20 @@ function LiveClock() {
   );
 }
 
-const deptBadgeColors = {
+const deptBadgeColors: Record<string, string> = {
   All: "bg-gray-100 text-gray-700 border-gray-200",
   Engineering: "bg-blue-100 text-blue-700 border-blue-200",
   Design: "bg-purple-100 text-purple-700 border-purple-200",
   Marketing: "bg-amber-100 text-amber-700 border-amber-200",
 };
 
-export default function Header({ department, workers, onBack }) {
+interface HeaderProps {
+  department: string;
+  workers: RankedWorker[];
+  onBack: () => void;
+}
+
+export default function Header({ department, workers, onBack }: HeaderProps) {
   const total = workers.length;
   const avgEff = total > 0
     ? (workers.reduce((s, w) => s + w.efficiency, 0) / total).toFixed(1)
@@ -55,7 +62,6 @@ export default function Header({ department, workers, onBack }) {
       transition={{ duration: 0.5, ease: "easeOut" }}
     >
       <div className="flex items-center justify-between px-10 py-3.5">
-        {/* Left — branding + department */}
         <div className="flex items-center gap-5">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-500 live-dot" />
@@ -80,7 +86,6 @@ export default function Header({ department, workers, onBack }) {
           </button>
         </div>
 
-        {/* Center — stats */}
         <div className="flex items-center gap-7">
           {[
             { label: "Workers", value: total, color: "text-blue-600" },
@@ -95,7 +100,6 @@ export default function Header({ department, workers, onBack }) {
           ))}
         </div>
 
-        {/* Right — clock */}
         <LiveClock />
       </div>
     </motion.header>
