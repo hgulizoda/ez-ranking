@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import logo from "../../assets/logo.png";
 
 function LiveClock() {
   const [now, setNow] = useState(new Date());
@@ -27,7 +28,9 @@ function LiveClock() {
       <p className="text-4xl font-bold text-[#1E293B] tabular-nums leading-tight tracking-tight">
         {time}
       </p>
-      <p className="text-base text-[#64748B] leading-tight mt-1.5 font-medium">{date}</p>
+      <p className="text-base text-[#64748B] leading-tight mt-1.5 font-medium">
+        {date}
+      </p>
     </div>
   );
 }
@@ -46,11 +49,11 @@ export default function BoardHeader({ workers, department, onBack }) {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="flex items-center justify-between px-12 py-6">
+      <div className="flex items-center justify-between px-12 py-4">
         {/* Left — Company logo + title */}
         <div className="flex items-center gap-5">
-          <div className="w-12 h-12 rounded-xl bg-[#3B82F6] flex items-center justify-center shadow-sm">
-            <span className="text-white font-extrabold text-xl tracking-tight">EZ</span>
+          <div className="w-20 h-20 rounded-xl  flex items-center justify-center shadow-sm overflow-hidden">
+            <img src={logo} alt="logo" className="w-full h-full object-cover" />
           </div>
           <div>
             <h1 className="text-3xl font-extrabold text-[#1E293B] tracking-tight leading-none">
